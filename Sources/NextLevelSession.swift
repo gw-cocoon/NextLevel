@@ -317,6 +317,9 @@ extension NextLevelSession {
                 writer.metadata = NextLevel.assetWriterMetadata
 
                 if let videoInput = self._videoInput {
+                    if let videoConfiguration = _videoConfiguration {
+                        videoInput.transform = videoConfiguration.transform
+                    }
                     if writer.canAdd(videoInput) {
                         writer.add(videoInput)
                     } else {
