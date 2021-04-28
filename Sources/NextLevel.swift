@@ -1347,31 +1347,38 @@ extension NextLevel {
         }
 
         var didChangeOrientation = false
-        let currentOrientation = AVCaptureVideoOrientation.avorientationFromUIDeviceOrientation(UIDevice.current.orientation)
+        
+        let newOrientation: AVCaptureVideoOrientation
+        
+        if automaticallyUpdatesDeviceOrientation {
+            newOrientation = AVCaptureVideoOrientation.avorientationFromUIDeviceOrientation(UIDevice.current.orientation)
+        } else {
+            newOrientation = deviceOrientation
+        }
 
         if let previewConnection = self.previewLayer.connection {
-            if previewConnection.isVideoOrientationSupported && previewConnection.videoOrientation != currentOrientation {
-                previewConnection.videoOrientation = currentOrientation
+            if previewConnection.isVideoOrientationSupported && previewConnection.videoOrientation != newOrientation {
+                previewConnection.videoOrientation = newOrientation
                 didChangeOrientation = true
             }
         }
 
         if let videoOutput = self._videoOutput, let videoConnection = videoOutput.connection(with: AVMediaType.video) {
-            if videoConnection.isVideoOrientationSupported && videoConnection.videoOrientation != currentOrientation {
-                videoConnection.videoOrientation = currentOrientation
+            if videoConnection.isVideoOrientationSupported && videoConnection.videoOrientation != newOrientation {
+                videoConnection.videoOrientation = newOrientation
                 didChangeOrientation = true
             }
         }
 
         if let photoOutput = self._photoOutput, let photoConnection = photoOutput.connection(with: AVMediaType.video) {
-            if photoConnection.isVideoOrientationSupported && photoConnection.videoOrientation != currentOrientation {
-                photoConnection.videoOrientation = currentOrientation
+            if photoConnection.isVideoOrientationSupported && photoConnection.videoOrientation != newOrientation {
+                photoConnection.videoOrientation = newOrientation
                 didChangeOrientation = true
             }
         }
 
         if didChangeOrientation == true {
-            self.deviceDelegate?.nextLevel(self, didChangeDeviceOrientation: currentOrientation)
+            self.deviceDelegate?.nextLevel(self, didChangeDeviceOrientation: newOrientation)
         }
     }
 
